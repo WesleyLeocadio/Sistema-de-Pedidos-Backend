@@ -15,5 +15,6 @@ public class CategoriaService {
 		Categoria obj = repo.findOne(id);
 		return obj;
 	}
+	
 
 }
