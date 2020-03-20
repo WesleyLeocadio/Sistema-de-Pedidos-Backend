@@ -10,6 +10,8 @@ import com.wesley.cursomc.domain.Categoria;
 import com.wesley.cursomc.repositories.CategoriaRepository;
 import com.wesley.cursomc.services.exceptions.ObjectNotFoundException;
 
+import java.util.List;
+
 @Service
 public class CategoriaService {
 	@Autowired
@@ -23,6 +25,11 @@ public class CategoriaService {
 		}
 		return obj;
 	}
+
+	public List<Categoria> findAll() {
+		return repo.findAll();
+	}
+
 
 	public Categoria insert(Categoria obj){
 		obj.setId(null);
