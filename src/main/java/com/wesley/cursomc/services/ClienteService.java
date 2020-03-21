@@ -1,6 +1,12 @@
 package com.wesley.cursomc.services;
 
+import com.wesley.cursomc.domain.Cidade;
+import com.wesley.cursomc.domain.Endereco;
+import com.wesley.cursomc.domain.enums.TipoCliente;
 import com.wesley.cursomc.dto.ClienteDTO;
+import com.wesley.cursomc.dto.ClienteNewDTO;
+import com.wesley.cursomc.repositories.CidadeRepository;
+import com.wesley.cursomc.repositories.EnderecoRepository;
 import com.wesley.cursomc.services.exceptions.DataIntegrityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,6 +25,11 @@ import java.util.List;
 public class ClienteService {
 	@Autowired
 	private ClienteRepository repo;
+	@Autowired
+	private CidadeRepository cidadeRepository;
+
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 
 	public Cliente find(Integer id) {
 		Cliente obj = repo.findOne(id);
@@ -26,6 +37,13 @@ public class ClienteService {
 			throw new ObjectNotFoundException("Objeto não encontrado! id: " + id
 					+ ", Tipo: " + Cliente.class.getName());
 		}
+		return obj;
+	}
+
+	public Cliente insert(Cliente obj) {
+		obj.setId(null);
+		obj = repo.save(obj);
+		enderecoRepository.save(obj.getEnderecos());
 		return obj;
 	}
 
@@ -60,7 +78,20 @@ public class ClienteService {
 	private void updateData(Cliente newObj, Cliente obj) {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
+	}
 
-
+	public Cliente fromDTO(ClienteNewDTO objDto) {
+		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(), TipoCliente.toEnum(objDto.getTipo()));
+		Cidade cid = cidadeRepository.findOne(objDto.getCidadeId());
+		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(), objDto.getBairro(), objDto.getCep(), cli, cid);
+		cli.getEnderecos().add(end);
+		cli.getTelefones().add(objDto.getTelefone1());
+		if (objDto.getTelefone2()!=null) {
+			cli.getTelefones().add(objDto.getTelefone2());
+		}
+		if (objDto.getTelefone3()!=null) {
+			cli.getTelefones().add(objDto.getTelefone3());
+		}
+		return cli;
 	}
 }
