@@ -6,6 +6,8 @@ import java.net.URI;
 import javax.validation.Valid;
 import com.wesley.cursomc.domain.Pedido;
 import com.wesley.cursomc.services.PedidoService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,15 +21,18 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(value = "/pedidos")
+@Api(value="API REST Pedidos")
 public class PedidoResource {
 	@Autowired
 	private PedidoService service;
 
+	@ApiOperation(value="Buscar pedido por ID")
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<Pedido> find(@PathVariable Integer id) {
 		Pedido obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
 	}
+	@ApiOperation(value="Inserir pedido")
 	@RequestMapping(method=RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody Pedido obj) {
 		obj = service.insert(obj);

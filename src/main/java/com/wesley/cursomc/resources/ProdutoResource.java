@@ -6,6 +6,8 @@ import com.wesley.cursomc.domain.Produto;
 import com.wesley.cursomc.dto.ProdutoDTO;
 import com.wesley.cursomc.resources.utils.URL;
 import com.wesley.cursomc.services.ProdutoService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -17,17 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value="/produtos")
+@Api(value="API REST Produtos")
 public class ProdutoResource {
 
     @Autowired
     private ProdutoService service;
 
+    @ApiOperation(value="Buscar produto por ID")
     @RequestMapping(value="/{id}", method=RequestMethod.GET)
     public ResponseEntity<Produto> find(@PathVariable Integer id) {
         Produto obj = service.find(id);
         return ResponseEntity.ok().body(obj);
     }
 
+    @ApiOperation(value="Buscar produtos")
     @RequestMapping(method=RequestMethod.GET)
     public ResponseEntity<Page<ProdutoDTO>> findPage(
             @RequestParam(value="nome", defaultValue="") String nome,
