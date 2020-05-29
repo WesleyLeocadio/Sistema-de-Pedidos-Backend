@@ -6,6 +6,7 @@ import com.wesley.cursomc.domain.enums.TipoCliente;
 import com.wesley.cursomc.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,6 +37,9 @@ public class DBService {
 
     @Autowired
     private ItemPedidoRepository itemPedidoRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder pe;
 
     public void instatiateTestDatabase() throws ParseException {
         Categoria cat1 = new Categoria(null, "Informática");
@@ -100,7 +104,7 @@ public class DBService {
         estadoRepository.save(Arrays.asList(est1,est2));
         cidadeRepository.save(Arrays.asList(c1,c2,c3));
 
-        Cliente cli1 = new Cliente(null,"Maria Silva","maria@gmail.com","23232223232322", TipoCliente.PESSOAFISICA);
+        Cliente cli1 = new Cliente(null, "Maria Silva", "nelio.cursos@gmail.com", "36378912377", TipoCliente.PESSOAFISICA, pe.encode("123"));
         cli1.getTelefones().addAll(Arrays.asList("27363323","93838393"));
 
         Endereco e1 = new Endereco(null,"Rua Flores","300","Apto 303","Jardim","38220834",cli1,c1);
