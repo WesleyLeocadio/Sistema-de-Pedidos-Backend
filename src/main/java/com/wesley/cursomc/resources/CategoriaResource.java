@@ -2,13 +2,14 @@ package com.wesley.cursomc.resources;
 
 
 import com.wesley.cursomc.dto.CategoriaDTO;
-import com.wesley.cursomc.repositories.CategoriaRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 
 import com.wesley.cursomc.domain.Categoria;
 import com.wesley.cursomc.services.CategoriaService;
@@ -55,6 +56,7 @@ public class CategoriaResource {
 	}
 	//ResponseEntity: Vai ser uma resposta http --- RequestBody converte objeto json em java
 	@ApiOperation(value="Inserir categoria")
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(method=RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDto) {
 		Categoria obj = service.fromDTO(objDto);
@@ -67,6 +69,7 @@ public class CategoriaResource {
 	}
 
 	@ApiOperation(value="Atualizar categoria")
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDto, @PathVariable Integer id) {
 		Categoria obj = service.fromDTO(objDto);
@@ -77,6 +80,7 @@ public class CategoriaResource {
 	}
 
 	@ApiOperation(value="Excluir categoria")
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		service.delete(id);
