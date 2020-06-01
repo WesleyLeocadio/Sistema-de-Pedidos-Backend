@@ -2,11 +2,14 @@ package com.wesley.cursomc.services;
 
 import com.wesley.cursomc.domain.Cidade;
 import com.wesley.cursomc.domain.Endereco;
+import com.wesley.cursomc.domain.enums.Perfil;
 import com.wesley.cursomc.domain.enums.TipoCliente;
 import com.wesley.cursomc.dto.ClienteDTO;
 import com.wesley.cursomc.dto.ClienteNewDTO;
 import com.wesley.cursomc.repositories.CidadeRepository;
 import com.wesley.cursomc.repositories.EnderecoRepository;
+import com.wesley.cursomc.security.UserSS;
+import com.wesley.cursomc.services.exceptions.AuthorizationException;
 import com.wesley.cursomc.services.exceptions.DataIntegrityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -38,6 +41,10 @@ public class ClienteService {
 	private BCryptPasswordEncoder pe;
 
 	public Cliente find(Integer id) {
+        UserSS user = UserService.authenticated();
+        if(user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())){
+            throw new AuthorizationException(" Acesso negado!");
+        }
 		Cliente obj = repo.findOne(id);
 		if (obj == null) {
 			throw new ObjectNotFoundException("Objeto não encontrado! id: " + id
