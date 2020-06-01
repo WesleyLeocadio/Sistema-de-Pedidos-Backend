@@ -1,15 +1,17 @@
 package com.wesley.cursomc.services;
 
-import com.wesley.cursomc.domain.Categoria;
-import com.wesley.cursomc.domain.ItemPedido;
-import com.wesley.cursomc.domain.PagamentoComBoleto;
-import com.wesley.cursomc.domain.Pedido;
+import com.wesley.cursomc.domain.*;
 import com.wesley.cursomc.domain.enums.EstadoPagamento;
 import com.wesley.cursomc.repositories.*;
+import com.wesley.cursomc.security.UserSS;
+import com.wesley.cursomc.services.exceptions.AuthorizationException;
 import com.wesley.cursomc.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 
 import java.util.Date;
 
@@ -37,6 +39,9 @@ public class PedidoService {
 
 	@Autowired
 	private EmailService emailService;
+
+	@Autowired
+	private ClienteRepository clienteRepository;
 
 
 
@@ -74,6 +79,16 @@ public class PedidoService {
 		emailService.sendOrderConfirmationEmail(obj);
 
 		return obj;
+	}
+
+	public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		UserSS user = UserService.authenticated();
+		if (user == null) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		PageRequest pageRequest = new PageRequest(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		Cliente cliente =  clienteRepository.findOne(user.getId());
+		return repo.findByCliente(cliente, pageRequest);
 	}
 
 }
