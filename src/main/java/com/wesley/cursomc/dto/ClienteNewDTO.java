@@ -38,7 +38,12 @@ public class ClienteNewDTO implements Serializable {
     private String telefone2;
     private String telefone3;
 
-    private Integer cidadeId;
+    @NotEmpty(message="Preenchimento obrigatório")
+    @Length(min=2, max=2, message="O tamanho deve ser de 2 caracteres")
+    private String estado;
+
+    @NotEmpty(message="Preenchimento obrigatório")
+    private String cidade;
 
     public ClienteNewDTO() {
     }
@@ -139,14 +144,21 @@ public class ClienteNewDTO implements Serializable {
         this.telefone3 = telefone3;
     }
 
-    public Integer getCidadeId() {
-        return cidadeId;
+    public String getEstado() {
+        return estado;
     }
 
-    public void setCidadeId(Integer cidadeId) {
-        this.cidadeId = cidadeId;
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
 
     public String getSenha() {
         return senha;

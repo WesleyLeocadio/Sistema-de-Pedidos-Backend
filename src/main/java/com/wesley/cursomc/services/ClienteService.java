@@ -2,12 +2,14 @@ package com.wesley.cursomc.services;
 
 import com.wesley.cursomc.domain.Cidade;
 import com.wesley.cursomc.domain.Endereco;
+import com.wesley.cursomc.domain.Estado;
 import com.wesley.cursomc.domain.enums.Perfil;
 import com.wesley.cursomc.domain.enums.TipoCliente;
 import com.wesley.cursomc.dto.ClienteDTO;
 import com.wesley.cursomc.dto.ClienteNewDTO;
 import com.wesley.cursomc.repositories.CidadeRepository;
 import com.wesley.cursomc.repositories.EnderecoRepository;
+import com.wesley.cursomc.repositories.EstadoRepository;
 import com.wesley.cursomc.security.UserSS;
 import com.wesley.cursomc.services.exceptions.AuthorizationException;
 import com.wesley.cursomc.services.exceptions.DataIntegrityException;
@@ -33,6 +35,11 @@ public class ClienteService {
 	private ClienteRepository repo;
 	@Autowired
 	private CidadeRepository cidadeRepository;
+
+	@Autowired
+	private EstadoRepository estadoRepository;
+
+
 
 	@Autowired
 	private EnderecoRepository enderecoRepository;
@@ -109,7 +116,13 @@ public class ClienteService {
 
 	public Cliente fromDTO(ClienteNewDTO objDto) {
 		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(), TipoCliente.toEnum(objDto.getTipo()), pe.encode(objDto.getSenha()));
-		Cidade cid = cidadeRepository.findOne(objDto.getCidadeId());
+		Estado estado = new Estado(null,objDto.getEstado());
+		Cidade cid= new Cidade(null,objDto.getCidade(),estado);
+
+
+		estadoRepository.save(estado);
+		cidadeRepository.save(cid);
+
 		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(), objDto.getBairro(), objDto.getCep(), cli, cid);
 		cli.getEnderecos().add(end);
 		cli.getTelefones().add(objDto.getTelefone1());
